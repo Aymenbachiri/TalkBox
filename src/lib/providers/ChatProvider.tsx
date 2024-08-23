@@ -4,6 +4,7 @@ import { StreamChat } from "stream-chat";
 import { Chat, OverlayProvider } from "stream-chat-expo";
 import { useAuth } from "./AuthProvider";
 import { supabase } from "../database/supabase";
+import { tokenProvider } from "../utils/TokenProvider";
 
 const client = StreamChat.getInstance(process.env.EXPO_PUBLIC_STREAM_API_KEY);
 
@@ -15,7 +16,8 @@ export default function ChatProvider({ children }: PropsWithChildren) {
     if (!profile) {
       return;
     }
-
+    console.log(profile.id);
+    tokenProvider().then(console.log);
     const connect = async () => {
       await client.connectUser(
         {
@@ -25,7 +27,7 @@ export default function ChatProvider({ children }: PropsWithChildren) {
             .from("avatars")
             .getPublicUrl(profile.avatar_url).data.publicUrl,
         },
-        client.devToken(profile.id)
+        tokenProvider
       );
       setIsReady(true);
     };
